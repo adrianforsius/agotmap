@@ -75,27 +75,16 @@ var $board = $('.board'),
             }
         }
         // Orders
-        for(var house in conf.orders) {
-            if (conf.orders[house].length > 0) {
-                value = conf.orders[house]
-                    .replace(/ cp(\n|$)/ig, ' power-1$1')
-                    .replace(/ cp\*(\n|$)/ig, ' power-2$1')
-                    .replace(/ m-1(\n|$)/ig, ' march-0$1')
-                    .replace(/ m\+0(\n|$)/ig, ' march-1$1')
-                    .replace(/ m(\+1)?\*?(\n|$)/ig, ' march-2$2')
-                    .replace(/ r(aid)?(\n|$)/ig, ' raid-1$2')
-                    .replace(/ r(aid)?\*(\n|$)/ig, ' raid-2$2')
-                    .replace(/ d(efend)?(\+1)?(\n|$)/ig, ' defend-1$3')
-                    .replace(/ d(efend)?(\+2)?\*?(\n|$)/ig, ' defend-2$3')
-                    .replace(/ s(upport)?(\n|$)/ig, ' support-1$2')
-                    .replace(/ s(upport)?(\+1)?\*?(\n|$)/ig, ' support-2$3')
-                    .split('\n');
-                for(var i = 0; i < value.length; i += 1) {
-                    var valueSplitted = value[i].split(': '),
-                        area = valueSplitted[0].toLowerCase().replace(/ - port$/, '-harbor').replace(/([' ]|^the )/g, '');
-                    htmlString += '<div class="order-' + valueSplitted[1].toLowerCase() + ' pos-' + area + '"></div>';
-                }
-            }
+        for(var house in settings.orders) {
+            // var ordersString = conf.orders[house]
+            // if (ordersString.length > 0) {
+            //     var orders = ordersString.split("|");
+            //     for (var i = 0; i < orders.length; i++) {
+            //         var order = $.parseJSON(orders[i]);
+                // }
+            // }
+            console.log(house);
+            // htmlString += '<div class="order-' + order['token'] + ' pos-' + order['land'] + '"></div>';
         }
         // Power Tokens on the board
         for(var house in conf.powertokens) {
@@ -157,7 +146,7 @@ var $board = $('.board'),
                 "lannister": $('[name="orders-lannister"]').val(),
                 "martell": $('[name="orders-martell"]').val(),
                 "stark": $('[name="orders-stark"]').val(),
-                "tyrell": $('[name="orders-tyrell"]').val()
+                "tyrell": settings.orders.tyrell
             },
 
             "powertokens": {
@@ -272,7 +261,7 @@ var $board = $('.board'),
         $('[name="orders-lannister"]').val(conf.orders.lannister);
         $('[name="orders-martell"]').val(conf.orders.martell);
         $('[name="orders-stark"]').val(conf.orders.stark);
-        $('[name="orders-tyrell"]').val(conf.orders.tyrell);
+        settings.orders.tyrell = conf.orders.tyrell;
 
         $('[name="powertokens-baratheon"]').val(conf.powertokens.baratheon);
         $('[name="powertokens-greyjoy"]').val(conf.powertokens.greyjoy);
@@ -347,16 +336,23 @@ var $board = $('.board'),
 
         $('[name="maxPowertokens"]').val(conf.maxPowertokens);
     },
-    orders = {
-        'm+0': 0,
-        'm+1': 1,
-        'm-1': -1,
-        'd+0': 0,
-        'd+1': 1
-    },
-    lands = {
-        0 : 'Oldtown',
-        1 : 'Highgarden'
+    settings = {
+        'orderTokens':
+        {
+            'm+0': 0,
+            'm+1': 1,
+            'm-1': -1,
+            'd+0': 0,
+            'd+1': 1
+        },
+        'orders' : 
+        {
+            'tyrell' : {}
+        },
+        'lands' :{
+            0 : 'Oldtown',
+            1 : 'Highgarden'
+        }
     };
 
 // inital setting of the board
@@ -365,15 +361,19 @@ try {
     if (hash.indexOf('#') === 0) {
         hash = hash.substr(1);
     }
-    if (hash.length > 0) {var conf;
+    if (hash.length > 0) {
+        var conf;
 		try {
 			// try to see if we already have JSON (from older versions of the link)
 			conf = JSON.parse(decodeURIComponent(hash));
+             console.log(conf);
 
 		} catch (e) {
 			// nope, lets do the decode and decompress routine
 			conf = JSON.parse(LZString.decompress(Base64.urlSafeDecode(hash)));
+             console.log(conf);
 		}
+
         setBoard(conf);
         setConf(conf);
     } else {
@@ -384,27 +384,31 @@ try {
 };
 
 
+// add orders with drop downs
 $('.navContent').on('click', '.placeOrder', function (event) {
-    var orderString = '';
-    $(event.delegateTarget).find('.orders').each(function (value, item) {
-        var type = $(this).find('.type').val();
+    var orders = $(event.delegateTarget).find('.orders');
+    var ordersCount = orders.length;
+    orders.each(function (index, value) {
+
+        var token = $(this).find('.token').val();
         var land = $(this).find('.land').val();
 
-        if(type !== '' && land !== '') {
-            console.log(type);
-            console.log(land);
-            orderString += land + ': ' + type  + ' ';
-        }
+        var house = $(event.delegateTarget).data('house');
+        var test = settings.orders[house];
+        settings.orders[house] = {"land": land, "token": token};
     });
-   $(event.delegateTarget).find('.updateBoard .hidden-orders').val(orderString);
+
+    var hash = Base64.urlSafeEncode(LZString.compress(JSON.stringify(getConf())));
+    location.hash = hash;
+
 });
 
 // setting hash on form change
 $('.navContent .updateBoard :input').on('change', function () {
-    console.log('changed');
 	var hash = Base64.urlSafeEncode(LZString.compress(JSON.stringify(getConf())));
     location.hash = hash;
 });
+
 // setting board and form on hash change
 $(window).on('hashchange', function () {
     var hash = location.hash;
@@ -418,11 +422,11 @@ $(window).on('hashchange', function () {
 		conf = JSON.parse(denavcodeURIComponent(hash));
 
 	} catch (e) {
+        console.log(e);
         console.log('failed to apply new settings');
 		// nope, lets do the decode and decompress routine
 		conf = JSON.parse(LZString.decompress(Base64.urlSafeDecode(hash)));
 	}
-
     setConf(conf);
     setBoard(getConf());
     setShortLink(location.href);
