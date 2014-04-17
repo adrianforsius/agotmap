@@ -141,7 +141,7 @@ var $board = $('.board'),
             "victory": $('[name="victory"]').val(),
             "vsbUsed": $('[name="vsb-used"]').attr('checked'),
             "ravenUsed": $('[name="raven-used"]').attr('checked'),
-            
+
             "units": {
                 "baratheon": $('[name="units-baratheon"]').val(),
                 "greyjoy": $('[name="units-greyjoy"]').val(),
@@ -150,7 +150,7 @@ var $board = $('.board'),
                 "stark": $('[name="units-stark"]').val(),
                 "tyrell": $('[name="units-tyrell"]').val()
             },
-            
+
             "orders": {
                 "baratheon": $('[name="orders-baratheon"]').val(),
                 "greyjoy": $('[name="orders-greyjoy"]').val(),
@@ -159,7 +159,7 @@ var $board = $('.board'),
                 "stark": $('[name="orders-stark"]').val(),
                 "tyrell": $('[name="orders-tyrell"]').val()
             },
-            
+
             "powertokens": {
                 "baratheon": $('[name="powertokens-baratheon"]').val(),
                 "greyjoy": $('[name="powertokens-greyjoy"]').val(),
@@ -168,7 +168,7 @@ var $board = $('.board'),
                 "stark": $('[name="powertokens-stark"]').val(),
                 "tyrell": $('[name="powertokens-tyrell"]').val()
             },
-            
+
             "housecards": {
                 "baratheon": $('[name="housecards-baratheon"]').val(),
                 "greyjoy": $('[name="housecards-greyjoy"]').val(),
@@ -177,7 +177,7 @@ var $board = $('.board'),
                 "stark": $('[name="housecards-stark"]').val(),
                 "tyrell": $('[name="housecards-tyrell"]').val()
             },
-			
+
 			"housecardTracking": {
 				"baratheon": [
 					$('[name="housecard-0-baratheon"]').is(':checked'),
@@ -234,7 +234,7 @@ var $board = $('.board'),
 					$('[name="housecard-6-tyrell"]').is(':checked')
 				]
 			},
-            
+
             "availablePowertokens": {
                 "baratheon": $('[name="availablePowertokens-baratheon"]').val(),
                 "greyjoy": $('[name="availablePowertokens-greyjoy"]').val(),
@@ -243,7 +243,7 @@ var $board = $('.board'),
                 "stark": $('[name="availablePowertokens-stark"]').val(),
                 "tyrell": $('[name="availablePowertokens-tyrell"]').val()
             },
-            
+
             "maxPowertokens": $('[name="maxPowertokens"]').val()
         }
         return conf;
@@ -287,7 +287,7 @@ var $board = $('.board'),
         $('[name="housecards-martell"]').val(conf.housecards.martell);
         $('[name="housecards-stark"]').val(conf.housecards.stark);
         $('[name="housecards-tyrell"]').val(conf.housecards.tyrell);
-		
+
 		if (conf.housecardTracking) {
 			$('[name="housecard-0-baratheon"]').attr('checked', conf.housecardTracking.baratheon[0]);
 			$('[name="housecard-1-baratheon"]').attr('checked', conf.housecardTracking.baratheon[1]);
@@ -296,7 +296,7 @@ var $board = $('.board'),
 			$('[name="housecard-4-baratheon"]').attr('checked', conf.housecardTracking.baratheon[4]);
 			$('[name="housecard-5-baratheon"]').attr('checked', conf.housecardTracking.baratheon[5]);
 			$('[name="housecard-6-baratheon"]').attr('checked', conf.housecardTracking.baratheon[6]);
-			
+
 			$('[name="housecard-0-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[0]);
 			$('[name="housecard-1-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[1]);
 			$('[name="housecard-2-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[2]);
@@ -304,7 +304,7 @@ var $board = $('.board'),
 			$('[name="housecard-4-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[4]);
 			$('[name="housecard-5-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[5]);
 			$('[name="housecard-6-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[6]);
-			
+
 			$('[name="housecard-0-lannister"]').attr('checked', conf.housecardTracking.lannister[0]);
 			$('[name="housecard-1-lannister"]').attr('checked', conf.housecardTracking.lannister[1]);
 			$('[name="housecard-2-lannister"]').attr('checked', conf.housecardTracking.lannister[2]);
@@ -312,7 +312,7 @@ var $board = $('.board'),
 			$('[name="housecard-4-lannister"]').attr('checked', conf.housecardTracking.lannister[4]);
 			$('[name="housecard-5-lannister"]').attr('checked', conf.housecardTracking.lannister[5]);
 			$('[name="housecard-6-lannister"]').attr('checked', conf.housecardTracking.lannister[6]);
-			
+
 			$('[name="housecard-0-martell"]').attr('checked', conf.housecardTracking.martell[0]);
 			$('[name="housecard-1-martell"]').attr('checked', conf.housecardTracking.martell[1]);
 			$('[name="housecard-2-martell"]').attr('checked', conf.housecardTracking.martell[2]);
@@ -320,7 +320,7 @@ var $board = $('.board'),
 			$('[name="housecard-4-martell"]').attr('checked', conf.housecardTracking.martell[4]);
 			$('[name="housecard-5-martell"]').attr('checked', conf.housecardTracking.martell[5]);
 			$('[name="housecard-6-martell"]').attr('checked', conf.housecardTracking.martell[6]);
-			
+
 			$('[name="housecard-0-stark"]').attr('checked', conf.housecardTracking.stark[0]);
 			$('[name="housecard-1-stark"]').attr('checked', conf.housecardTracking.stark[1]);
 			$('[name="housecard-2-stark"]').attr('checked', conf.housecardTracking.stark[2]);
@@ -328,7 +328,7 @@ var $board = $('.board'),
 			$('[name="housecard-4-stark"]').attr('checked', conf.housecardTracking.stark[4]);
 			$('[name="housecard-5-stark"]').attr('checked', conf.housecardTracking.stark[5]);
 			$('[name="housecard-6-stark"]').attr('checked', conf.housecardTracking.stark[6]);
-			
+
 			$('[name="housecard-0-tyrell"]').attr('checked', conf.housecardTracking.tyrell[0]);
 			$('[name="housecard-1-tyrell"]').attr('checked', conf.housecardTracking.tyrell[1]);
 			$('[name="housecard-2-tyrell"]').attr('checked', conf.housecardTracking.tyrell[2]);
@@ -382,13 +382,14 @@ $(window).on('hashchange', function () {
     if (hash.indexOf('#') === 0) {
         hash = hash.substr(1);
     }
-	
+
 	var conf;
 	try {
 		// try to see if we already have JSON (from older versions of the link)
 		conf = JSON.parse(decodeURIComponent(hash));
 
 	} catch (e) {
+        console.log('failed to apply new settings');
 		// nope, lets do the decode and decompress routine
 		conf = JSON.parse(LZString.decompress(Base64.urlSafeDecode(hash)));
 	}
