@@ -386,13 +386,14 @@ try {
 
 $('.navContent').on('click', '.placeOrder', function (event) {
     var orderString = '';
-    console.log(event);
-    $(event.delegateTarget).find('.orders').foreach(function (value, item) {
-        var type = $(value).find('.type').val();
-        var land = $(value).find('.land').val();
+    $(event.delegateTarget).find('.orders').each(function (value, item) {
+        var type = $(this).find('.type').val();
+        var land = $(this).find('.land').val();
 
         if(type !== '' && land !== '') {
-            orderString+= type + ': ' + land + ' ';
+            console.log(type);
+            console.log(land);
+            orderString += land + ': ' + type  + ' ';
         }
     });
    $(event.delegateTarget).find('.updateBoard .hidden-orders').val(orderString);
