@@ -75,17 +75,12 @@ var $board = $('.board'),
             }
         }
         // Orders
-        for(var house in settings.orders) {
-            // var ordersString = conf.orders[house]
-            // if (ordersString.length > 0) {
-            //     var orders = ordersString.split("|");
-            //     for (var i = 0; i < orders.length; i++) {
-            //         var order = $.parseJSON(orders[i]);
-                // }
-            // }
-            console.log(house);
-            // htmlString += '<div class="order-' + order['token'] + ' pos-' + order['land'] + '"></div>';
-        }
+        $.each(settings.orders, function (index, house) {
+            $.each(house, function (index, order) {
+                console.log('<div class="order-' + order['token'] + ' pos-' + order['land'] + '"></div>');
+                htmlString += '<div class="order-' + order['token'] + ' pos-' + order['land'] + '"></div>';
+            });
+        });
         // Power Tokens on the board
         for(var house in conf.powertokens) {
             if (conf.powertokens[house].length > 0) {
@@ -261,7 +256,8 @@ var $board = $('.board'),
         $('[name="orders-lannister"]').val(conf.orders.lannister);
         $('[name="orders-martell"]').val(conf.orders.martell);
         $('[name="orders-stark"]').val(conf.orders.stark);
-        settings.orders.tyrell = conf.orders.tyrell;
+        $('[name="orders-tyrell"]').val("");
+        // settings.orders.tyrell = conf.orders.tyrell;
 
         $('[name="powertokens-baratheon"]').val(conf.powertokens.baratheon);
         $('[name="powertokens-greyjoy"]').val(conf.powertokens.greyjoy);
@@ -347,7 +343,16 @@ var $board = $('.board'),
         },
         'orders' : 
         {
-            'tyrell' : {}
+            'tyrell' : {
+                0 : {
+                    'token': 'march-0',
+                    'land': 'highgarden'
+                },
+                1 : {
+                    'token': 'march-1',
+                    'land': 'oldtown'
+                }
+            }
         },
         'lands' :{
             0 : 'Oldtown',
