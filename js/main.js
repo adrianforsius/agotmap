@@ -346,6 +346,17 @@ var $board = $('.board'),
         $('[name="availablePowertokens-tyrell"]').val(conf.availablePowertokens.tyrell);
 
         $('[name="maxPowertokens"]').val(conf.maxPowertokens);
+    },
+    orders = {
+        'm+0': 0,
+        'm+1': 1,
+        'm-1': -1,
+        'd+0': 0,
+        'd+1': 1
+    },
+    lands = {
+        0 : 'Oldtown',
+        1 : 'Highgarden'
     };
 
 // inital setting of the board
@@ -371,8 +382,25 @@ try {
 } catch (e) {
     setBoard(getConf());
 };
+
+
+$('.navContent').on('click', '.placeOrder', function (event) {
+    var orderString = '';
+    console.log(event);
+    $(event.delegateTarget).find('.orders').foreach(function (value, item) {
+        var type = $(value).find('.type').val();
+        var land = $(value).find('.land').val();
+
+        if(type !== '' && land !== '') {
+            orderString+= type + ': ' + land + ' ';
+        }
+    });
+   $(event.delegateTarget).find('.updateBoard .hidden-orders').val(orderString);
+});
+
 // setting hash on form change
-$('.navContent :input').on('change', function () {
+$('.navContent .updateBoard :input').on('change', function () {
+    console.log('changed');
 	var hash = Base64.urlSafeEncode(LZString.compress(JSON.stringify(getConf())));
     location.hash = hash;
 });
@@ -386,7 +414,7 @@ $(window).on('hashchange', function () {
 	var conf;
 	try {
 		// try to see if we already have JSON (from older versions of the link)
-		conf = JSON.parse(decodeURIComponent(hash));
+		conf = JSON.parse(denavcodeURIComponent(hash));
 
 	} catch (e) {
         console.log('failed to apply new settings');

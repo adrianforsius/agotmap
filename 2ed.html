@@ -306,38 +306,53 @@ The Shivering Sea: Ship</textarea>
     </div>
     <input type="radio" name="navContentControl" id="tyrellStuff"/>
     <div class="navContent">
-        <label class="fullwidth">
-            Units:
-            <textarea name="units-tyrell">Highgarden: Footman, Knight
-Dornish Marches: Footman
-Redwyne Straights: Ship</textarea>
-        </label>
-        <label class="fullwidth">
-            Orders:
-            <textarea name="orders-tyrell"></textarea>
-        </label>
-        <label class="fullwidth">
-            Powertokens in Areas:
-            <textarea name="powertokens-tyrell"></textarea>
-        </label>
-        <label class="fullwidth">
-            Available Power Tokens:
-            <input name="availablePowertokens-tyrell" type="number" min="0" max="20" step="1" value="5"/>
-        </label>
-		 <input type="checkbox" name="housecard-0-tyrell" id="housecard-0-tyrell" checked="checked">
-        <label for="housecard-0-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535277_t.png"></label>
-        <input type="checkbox" name="housecard-1-tyrell" id="housecard-1-tyrell">
-        <label for="housecard-1-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535276_t.png"></label>
-        <input type="checkbox" name="housecard-2-tyrell" id="housecard-2-tyrell">
-        <label for="housecard-2-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535275_t.png"></label>
-        <input type="checkbox" name="housecard-3-tyrell" id="housecard-3-tyrell">
-        <label for="housecard-3-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535280_t.png"></label>
-        <input type="checkbox" name="housecard-4-tyrell" id="housecard-4-tyrell">
-        <label for="housecard-4-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535274_t.png"></label>
-        <input type="checkbox" name="housecard-5-tyrell" id="housecard-5-tyrell">
-        <label for="housecard-5-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535278_t.png"></label>
-        <input type="checkbox" name="housecard-6-tyrell" id="housecard-6-tyrell">
-        <label for="housecard-6-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535279_t.png"></label>
+        Orders:
+        <div class="orders">
+            <div class="order1 order" style="border: 4px solid black;">
+                <select name="" class="type">
+                    <option value="">---</option>
+                    <option value="m+1">March + 1</option>
+                    <option value="m+0">March + 0</option>
+                </select>
+                <select name="" class="land">
+                    <option value="">---</option>
+                    <option value="highgarden">Highgarden</option>
+                    <option value="oldtown">Oldtown</option>
+                </select>
+                <button class="placeOrder">Place order</button>
+            </div>
+        </div>
+        <div class="updateBoard">
+            <input type="text" class="orders-tyrell hidden-orders" style="" />
+            <label class="fullwidth">
+                Units:
+                <textarea name="units-tyrell">Highgarden: Footman, Knight
+    Dornish Marches: Footman
+    Redwyne Straights: Ship</textarea>
+            </label>
+            <label class="fullwidth">
+                Powertokens in Areas:
+                <textarea name="powertokens-tyrell"></textarea>
+            </label>
+            <label class="fullwidth">
+                Available Power Tokens:
+                <input name="availablePowertokens-tyrell" type="number" min="0" max="20" step="1" value="5"/>
+            </label>
+    		 <input type="checkbox" name="housecard-0-tyrell" id="housecard-0-tyrell" checked="checked">
+            <label for="housecard-0-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535277_t.png"></label>
+            <input type="checkbox" name="housecard-1-tyrell" id="housecard-1-tyrell">
+            <label for="housecard-1-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535276_t.png"></label>
+            <input type="checkbox" name="housecard-2-tyrell" id="housecard-2-tyrell">
+            <label for="housecard-2-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535275_t.png"></label>
+            <input type="checkbox" name="housecard-3-tyrell" id="housecard-3-tyrell">
+            <label for="housecard-3-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535280_t.png"></label>
+            <input type="checkbox" name="housecard-4-tyrell" id="housecard-4-tyrell">
+            <label for="housecard-4-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535274_t.png"></label>
+            <input type="checkbox" name="housecard-5-tyrell" id="housecard-5-tyrell">
+            <label for="housecard-5-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535278_t.png"></label>
+            <input type="checkbox" name="housecard-6-tyrell" id="housecard-6-tyrell">
+            <label for="housecard-6-tyrell"><img src="http://cf.geekdo-images.com/images/pic1535279_t.png"></label>
+        </div>
     </div>
 </div>
 <div class="board">
