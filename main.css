@@ -1372,3 +1372,15 @@ input[type="checkbox"][name^="housecard-"]:checked + label {
     text-shadow: 1px 1px 2px #000;
     white-space: nowrap;
 }
+.navContent h5 {
+    margin: 0;
+    padding: 0;
+}
+.unit .remove{
+    height: 10px;
+    width: 10px;
+    background: #FFF;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}

@@ -16,96 +16,133 @@ var $board = $('.board'),
     setBoard = function (conf) {
         var value,
             htmlString = '';
+
+        var orderHtml = '';
+        $.each(conf.controlledLands.tyrell, function (orderIndex, orderLand){
+            var order = conf.orders.tyrell.filter(function ( obj ) {
+                if(obj.land === orderLand) { return obj }
+            });
+
+            orderHtml += '<div class="order' + orderIndex + ' order">';
+            orderHtml += '<select name="tyrell-order-token" class="token"><option value="">---</option>';
+
+            $.each(conf.controlledLands.tyrell, function (landIndex, landName) {
+                console.log(landName);
+                var selected = '';
+                if(order[0] !== undefined && landName.land === order[0].land) { 
+                    selected = 'selected';
+                }
+                orderHtml += '<option value="'+ landName.land +'" ' + selected + '>'+ landName.land +'</option>';
+              
+            });
+            orderHtml += '</select>';
+            orderHtml += '<select name="tyrell-order-land" class="land"><option value="">---</option>';
+            $.each(conf.orderTokens, function (tokenIndex) {
+                var selected = '';
+                if(order[0] !== undefined && tokenIndex === order[0].token) { 
+                    selected = 'selected';
+                }
+                orderHtml += '<option value="'+ tokenIndex +'" ' + selected + '>'+ tokenIndex +'</option>';
+            });
+            orderHtml += '</select>';
+            orderHtml += '</div>';
+
+        });
+        $('.tyrell-controls .orders').html(orderHtml);
+
+        var unitHtml = '';
+        unitHtml += '<select name="tyrell-new-unit-land" class="land"><option value="">---</option>';
+        $.each(conf.lands, function (landIndex, land){
+            unitHtml += '<option value="'+ land.land +'">'+ land.land +'</option>';
+        });
+        unitHtml += '</select>';
+        unitHtml += '<select name="tyrell-new-unit-rank" class="unitRank"><option value="">---</option>';
+        $.each(conf.units, function (unit, value){
+            unitHtml += '<option value="'+ unit +'">'+ unit +'</option>';
+        });
+        unitHtml += '</select>';
+
+        $('.tyrell-controls .newUnit').html(unitHtml);
+
+
         // wildling token
         htmlString += '<div class="wildlingmarker pos-wilding-' + conf.wildlings + '"></div>';
         // round token
         htmlString += '<div class="round pos-round-' + conf.round + '"></div>';
         // Influence Tracks
         // Iron Throne
-        value = conf.ironThroneOrder.split('\n');
-        for(var i = 0; i < value.length; i += 1) {
-            htmlString += '<div class="token-' + value[i].toLowerCase() + ' pos-throne-' + (i + 1) + '"></div>';
-        }
+        $.each(conf.ironThroneOrder, function (place, house) {
+              htmlString += '<div class="token-' + house + ' pos-throne-' + place + '"></div>';
+        });
+     
         // Fiefdom
-        value = conf.fiefdomOrder.split('\n');
-        for(var i = 0; i < value.length; i += 1) {
-            htmlString += '<div class="token-' + value[i].toLowerCase() + ' pos-fiefdom-' + (i + 1) + '"></div>';
-        }
+        $.each(conf.fiefdomOrder, function (place, house) {
+            htmlString += '<div class="token-' + house + ' pos-fiefdom-' + place + '"></div>';
+        });
+        
         // King's Court
-        value = conf.kingsCourtOrder.split('\n');
-        for(var i = 0; i < value.length; i += 1) {
-            htmlString += '<div class="token-' + value[i].toLowerCase() + ' pos-court-' + (i + 1) + '"></div>';
-        }
+        $.each(conf.kingsCourtOrder, function (place, house) {
+            htmlString += '<div class="token-' + house + ' pos-court-' + place + '"></div>';
+        });
+
         // Supply
-        value = conf.supply.split('\n');
-        for(var i = 0; i < value.length; i += 1) {
-            htmlString += '<div class="supply-' + value[i].toLowerCase().split(': ')[0] + ' pos-supply-' + value[i].split(': ')[1] + '"></div>';
-        }
+        $.each(conf.supply, function (house, supply) {
+            htmlString += '<div class="supply-' + house + ' pos-supply-' + supply + '"></div>';
+        });
         // Victory
-        value = conf.victory.split('\n');
-        for(var i = 0; i < value.length; i += 1) {
-            htmlString += '<div class="victory-' + value[i].toLowerCase().split(': ')[0] + ' pos-victory-' + value[i].split(': ')[1] + '"></div>';
-        }
+        $.each(conf.victory, function (house, points) {
+            htmlString += '<div class="victory-' + house + ' pos-victory-' + points + '"></div>';
+        });
         // Garrisons
-        value = conf.garrisons.split('\n');
-        for(var i = 0; i < value.length; i += 1) {
-            htmlString += '<div class="garrison pos-' + value[i].toLowerCase().split(': ')[0].toLowerCase().replace(/ - port$/, '-harbor').replace(/([' ]|^the )/g, '') + '" data-value="' + value[i].split(': ')[1] + '"></div>';
-        }
+        $.each(conf.garrisons, function (house, garrison) {
+            htmlString += '<div class="garrison pos-' + house + '" data-value="' + garrison + '"></div>';
+        });
         // VSB and Raven token
         htmlString += '<div class="vsb-token ' + (conf.vsbUsed ? 'used' : 'unused') + '"></div>';
         htmlString += '<div class="raven-token ' + (conf.ravenUsed ? 'used' : 'unused') + '"></div>';
         // Units
-        for(var house in conf.units) {
-            if (conf.units[house].length > 0) {
-                foo = conf.units;
-                value = conf.units[house]
-                    .replace(/ (routed-)?kn(,|\n|$)/ig, ' $1knight$2')
-                    .replace(/ (routed-)?fm(,|\n|$)/ig, ' $1footman$2')
-                    .replace(/ (routed-)?se(,|\n|$)/ig, ' $1siege$2')
-                    .replace(/ (routed-)?sh(,|\n|$)/ig, ' $1ship$2')
-                    .split('\n');
-                for(var i = 0; i < value.length; i += 1) {
-                    var valueSplitted = value[i].split(': '),
-                        area = valueSplitted[0].toLowerCase().replace(/ - port$/, '-harbor').replace(/([' ]|^the )/g, ''),
-                        units = valueSplitted[1].split(', ');
-                    for(var j = 0; j < units.length; j += 1) {
-                        htmlString += '<div class="' + units[j].toLowerCase() + '-' + house + ' pos-' + area + ' unit"></div>';
-                        lands = settings.controlledLands[house];
-                        if($.inArray(area, lands) === -1){
-                            lands.push(area);
-                        }
+
+        $.each(conf.controlledLands, function (houseIndex, house) {
+            $.each(house, function (landIndex, land) {
+                $.each(land.units, function (unit, count) {
+                    if(count > 0) {
+                        htmlString += '<div class="' + unit + '-' + houseIndex + ' pos-' + land.land + ' unit"><div class="remove"></div></div>';
                     }
-                }
-            }
-        }
+                });
+            });
+        });
 
         $.each(conf.orders, function (index, house) {
             $.each(house, function (index, order) {
                 htmlString += '<div class="order-' + order['token'] + ' pos-' + order['land'] + '"></div>';
             });
         });
+
         // Power Tokens on the board
-        for(var house in conf.powertokens) {
-            if (conf.powertokens[house].length > 0) {
-                value = conf.powertokens[house].split('\n');
-                for(var i = 0; i < value.length; i += 1) {
-                    var area = value[i].toLowerCase().replace(/ - port$/, '-harbor').replace(/([' ]|^the )/g, '');
-                    htmlString += '<div class="powertoken-' + house + ' pos-' + area + '"></div>';
-                }
-            }
-        }
-        for(var house in conf.availablePowertokens) {
+        // for(var house in conf.powertokens) {
+        //     if (conf.powertokens[house].length > 0) {
+        //         value = conf.powertokens[house].split('\n');
+        //         for(var i = 0; i < value.length; i += 1) {
+        //             var area = value[i].toLowerCase().replace(/ - port$/, '-harbor').replace(/([' ]|^the )/g, '');
+        //             htmlString += '<div class="powertoken-' + house + ' pos-' + area + '"></div>';
+        //         }
+        //     }
+        // }
+        $.each(conf.powertokens, function (house, count) {
             htmlString += '<div class="tokenCounts-' + house + ' powertoken-' + house + '">';
             // available Power Tokens
             htmlString += '<div class="availablePowertokens">';
-            htmlString += conf.availablePowertokens[house];
+            htmlString += count
             htmlString += '</div>';
             // left Power Tokens
             htmlString += '<div class="leftPowertokens">';
-            htmlString += conf.maxPowertokens - conf.availablePowertokens[house] - (conf.powertokens[house].length > 0 ? conf.powertokens[house].split('\n').length : 0);
+            htmlString += conf.max.powertokens - count;
             htmlString += '</div>';
             htmlString += '</div>';
-        }
+        });
+        // for(var house in conf.availablePowertokens) {
+          
+        // }
         // housecard tracking
         for(var house in conf.housecards) {
             var housecards = conf.housecards[house].split('\n');
@@ -116,8 +153,423 @@ var $board = $('.board'),
         $(':not(input)', $board).remove();
         $(htmlString).appendTo($board);
     },
-    getConf = function () {
-        var conf = {
+    currentConf = {
+        'wildlings': 2,
+        'round': 2,
+        'ironThroneOrder':
+        {
+            1: 'baratheon',
+            2: 'lannister',
+            3: 'stark',
+            4: 'martell',
+            5: 'greyjoy',
+            6: 'tyrell',
+        },
+        'fiefdomOrder':
+        {
+            1: 'greyjoy',
+            2: 'tyrell',
+            3: 'martell',
+            4: 'stark',
+            5: 'baratheon',
+            6: 'lannister',
+        },
+        'kingsCourtOrder':
+        {
+            1: 'lannister',
+            2: 'stark',
+            3: 'martell',
+            4: 'baratheon',
+            5: 'tyrell',
+            6: 'greyjoy',
+        },
+        'garrisons':  
+        {        
+            'kingslanding': 5,
+            'eyrie': 6,
+            'dragonstone': 2,
+            'winterfell': 2,
+            'lannisport': 2,
+            'highgarden': 2,
+            'sunspear': 2,
+            'pyke': 2,
+        },
+        'supply':   
+        {
+            'lannister': 2,
+            'stark': 1,
+            'martell': 2,
+            'baratheon': 2,
+            'tyrell': 2,
+            'greyjoy': 2,
+        },
+        'victory':  {
+            'lannister': 1,
+            'stark': 2,
+            'martell': 1,
+            'baratheon': 1,
+            'tyrell': 1,
+            'greyjoy': 1,
+        },
+        'vsbUsed': false,
+        'ravenUsed': false,
+        'orderTokens':
+        {
+            'march-0': 0,
+            'march-1': 1,
+            'march-2': -1,
+            'defend-0': 0,
+            'defend-1': 1,
+            'defend-2': 1
+        },
+        'orders' : 
+        {
+            'baratheon' : [],
+            'greyjoy' : [],
+            'lannister' : [],
+            'martell' : [],
+            'stark' : [],
+            'tyrell' : []
+        },
+        'controlledLands' : 
+        {
+            'tyrell':
+            [
+                {
+                    'land': 'highgarden',
+                    'units':
+                    {
+                        'knight': 1,
+                        'footman': 1,
+                        'ship': 0,
+                        'powertoken': 0
+                    }
+                },
+                {
+                    'land': 'oldtown',
+                    'units':
+                    {
+                        'knight': 1,
+                        'footman': 1,
+                        'ship': 0,
+                        'powertoken': 0
+                    }
+                }
+            ],
+            'greyjoy' : [],
+            'lannister' : [],
+            'martell' : [],
+            'stark' : [],
+            'baratheon' : []
+        },
+        'lands':
+        [
+           {
+                'land': 'twins',
+                'terrain': 'land',
+                'occupied': true
+            },
+               {
+                'land': 'fingers',
+                'terrain': 'land',
+                'occupied': true
+            },
+               {
+                'land': 'mountainsofthemoon',
+                'terrain': 'land',
+                'occupied': true
+            },
+               {
+                'land': 'eyrie',
+                'terrain': 'land',
+                'occupied': true
+            },
+               {
+                'land': 'crackclawpoint',
+                'terrain': 'land',
+                'occupied': true
+            },
+                {
+                'land': 'kingslanding',
+                'terrain': 'land',
+                'occupied': true
+            },
+                {
+                'land': 'threetowers',
+                'terrain': 'land',
+                'occupied': true
+            },
+                {
+                'land': 'blackwaterbay',
+                'terrain': 'land',
+                'occupied': true
+            },
+                {
+                'land': 'eastsummersea',
+                'terrain': 'land',
+                'occupied': true
+            },
+                {
+                'land': 'westsummerseaa',
+                'terrain': 'land',
+                'occupied': true
+            },
+                {
+                'land': 'arbor',
+                'terrain': 'land',
+                'occupied': true
+            },
+              {
+                'land': 'boneway',
+                'terrain': 'land',
+                'occupied': true
+            },
+              {
+                'land': 'princespass',
+                'terrain': 'land',
+                'occupied': true
+            },
+              {
+                'land': 'yronwood',
+                'terrain': 'land',
+                'occupied': true
+            },
+              {
+                'land': 'stormsend',
+                'terrain': 'land',
+                'occupied': true
+            },
+              {
+                'land': 'stormsend-harbor',
+                'terrain': 'land',
+                'occupied': true
+            },
+              {
+                'land': 'starfall',
+                'terrain': 'land',
+                'occupied': true
+            },
+              {
+                'land': 'highgarden',
+                'terrain': 'land',
+                'occupied': true
+            },
+                          {
+                'land': 'dornishmarches',
+                'terrain': 'land',
+                'occupied': true
+            },
+                          {
+                'land': 'oldtown',
+                'terrain': 'land',
+                'occupied': true
+            },
+                          {
+                'land': 'oldtown-harbor',
+                'terrain': 'land',
+                'occupied': true
+            },
+                          {
+                'land': 'redwynestraights',
+                'terrain': 'land',
+                'occupied': true
+            },
+                             {
+                'land': 'sunspear',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'sunspear-harbor',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'saltshore',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'seaofdorne',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'pyke',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'pyke-harbor',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'sunsetsea',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'goldensound',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'lannisport',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+
+                 {
+                'land': 'lannisport-harbor',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'stoneysept',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'harrenhal',
+                'terrain': 'land',
+                'occupied': true
+            },
+
+                 {
+                'land': 'riverrun',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'searoadmarches',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'blackwater',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'reach',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'seagard',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'ironmansbay',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'winterfell-harbor',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'karhold',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'stonyshore',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'whiteharbor',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'whiteharbor-harbor',
+                'terrain': 'land',
+                'occupied': true
+            },
+          {
+                'land': 'widowswatch',
+                'terrain': 'land',
+                'occupied': true
+            },
+          {
+                'land': 'flintsfinger',
+                'terrain': 'land',
+                'occupied': true
+            },
+          {
+                'land': 'greywaterwatch',
+                'terrain': 'land',
+                'occupied': true
+            },
+          {
+                'land': 'moatcailin',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'dragonstone',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'dragonstone-harbor',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'kingswood',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'bayofice',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'shiveringsea',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'narrowsea',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'shipbreakerbay',
+                'terrain': 'land',
+                'occupied': true
+            },          {
+                'land': 'winterfell',
+                'terrain': 'land',
+                'occupied': true
+            },    {
+                'land': 'castleblack',
+                'terrain': 'land',
+                'occupied': true
+            },
+        ],
+        'units':
+        {
+            'knight': 2,
+            'footman': 1,
+            'ship': 1
+        },
+        'powertokens': {
+            'baratheon': 5,
+            'greyjoy': 5,
+            'lannister': 5,
+            'martell': 5,
+            'stark': 5,
+            'tyrell': 5,
+        },
+        'max':
+        {
+            'powertokens': 20,
+        }
+    },
+    getConf = function (currentConf) {
+        currentConf = {
             "wildlings": $('[name="wildlings"]').val(),
             "round": $('[name="round"]').val(),
             "ironThroneOrder": $('[name="ironThroneOrder"]').val(),
@@ -128,7 +580,6 @@ var $board = $('.board'),
             "victory": $('[name="victory"]').val(),
             "vsbUsed": $('[name="vsb-used"]').attr('checked'),
             "ravenUsed": $('[name="raven-used"]').attr('checked'),
-
             "units": {
                 "baratheon": $('[name="units-baratheon"]').val(),
                 "greyjoy": $('[name="units-greyjoy"]').val(),
@@ -137,15 +588,8 @@ var $board = $('.board'),
                 "stark": $('[name="units-stark"]').val(),
                 "tyrell": $('[name="units-tyrell"]').val()
             },
-
-            "orders": {
-                "baratheon": settings.orders.baratheon,
-                "greyjoy": settings.orders.greyjoy,
-                "lannister": settings.orders.lannister,
-                "martell": settings.orders.martell,
-                "stark": settings.orders.stark,
-                "tyrell": settings.orders.tyrell
-            },
+            "controlledLands": currentConf.controlledLands,
+            "orders": currentConf.orders,
             "powertokens": {
                 "baratheon": $('[name="powertokens-baratheon"]').val(),
                 "greyjoy": $('[name="powertokens-greyjoy"]').val(),
@@ -232,185 +676,25 @@ var $board = $('.board'),
 
             "maxPowertokens": $('[name="maxPowertokens"]').val()
         }
-        return conf;
+        return currentConf;
+    }
+    calcMap = function () {
+
     },
-    setConf = function (conf) {
-        $('[name="wildlings"]').val(conf.wildlings);
-        $('[name="round"]').val(conf.round);
-        $('[name="ironThroneOrder"]').val(conf.ironThroneOrder);
-        $('[name="fiefdomOrder"]').val(conf.fiefdomOrder);
-        $('[name="kingsCourtOrder"]').val(conf.kingsCourtOrder);
-        $('[name="garrisons"]').val(conf.garrisons);
-        $('[name="supply"]').val(conf.supply);
-        $('[name="victory"]').val(conf.victory);
-        $('[name="vsb-used"]').attr('checked', conf.vsbUsed);
-        $('[name="raven-used"]').attr('checked', conf.ravenUsed);
+    calcOrders = function () {
+        var orders = $(event.delegateTarget).find('.orders');
+        var ordersCount = orders.length;
+        orders.each(function (index, value) {
 
-        $('[name="units-baratheon"]').val(conf.units.baratheon);
-        $('[name="units-greyjoy"]').val(conf.units.greyjoy);
-        $('[name="units-lannister"]').val(conf.units.lannister);
-        $('[name="units-martell"]').val(conf.units.martell);
-        $('[name="units-stark"]').val(conf.units.stark);
-        $('[name="units-tyrell"]').val(conf.units.tyrell);
+            var token = $(this).find('.token').val();
+            var land = $(this).find('.land').val();
 
-
-        var orderHtml = '';
-       
-
-
-        $.each(settings.controlledLands.tyrell, function (orderIndex, orderLand){
-            var order = conf.orders.tyrell.filter(function ( obj ) {
-                if(obj.land === orderLand) { return obj }
-            });
-
-            orderHtml += '<div class="order' + orderIndex + ' order">';
-            orderHtml += '<select name="tyrell-order-token" class="token"><option value="">---</option>';
-
-            $.each(settings.controlledLands.tyrell, function (landIndex, landName) {
-                var selected = '';
-                if(order[0] !== undefined && landName === order[0].land) { 
-                    selected = 'selected';
-                }
-                orderHtml += '<option value="'+ landName +'" ' + selected + '>'+ landName +'</option>';
-              
-            });
-            orderHtml += '</select>';
-            orderHtml += '<select name="tyrell-order-land" class="land"><option value="">---</option>';
-            $.each(settings.orderTokens, function (tokenIndex) {
-                var selected = '';
-                if(order[0] !== undefined && tokenIndex === order[0].token) { 
-                    selected = 'selected';
-                }
-                orderHtml += '<option value="'+ tokenIndex +'" ' + selected + '>'+ tokenIndex +'</option>';
-            });
-            orderHtml += '</select>';
-            orderHtml += '</div>';
-
+            var house = $(event.delegateTarget).data('house');
+            settings.orders[house].push({"land": land, "token": token});
         });
-        $('.tyrell-controls .orders').html(orderHtml);
-     
-        
-
-        // var orderBaratheon = settings.orders.baratheon || 
-        // $('[name="orders-baratheon"]').val(conf.orders.baratheon);
-        // $('[name="orders-greyjoy"]').val(conf.orders.greyjoy);
-        // $('[name="orders-lannister"]').val(conf.orders.lannister);
-        // $('[name="orders-martell"]').val(conf.orders.martell);
-        // $('[name="orders-stark"]').val(conf.orders.stark);
-        // $('[name="orders-tyrell"]').val(conf.orders.tyrell);
-        // settings.orders.baratheon = conf.orders.baratheon;
-        settings.orders.baratheon = conf.orders.baratheon;
-        settings.orders.greyjoy = conf.orders.greyjoy;
-        settings.orders.lannister = conf.orders.lannister;
-        settings.orders.martell = conf.orders.martell;
-        settings.orders.stark = conf.orders.stark;
-        settings.orders.tyrell = conf.orders.tyrell;
-
-        $('[name="powertokens-baratheon"]').val(conf.powertokens.baratheon);
-        $('[name="powertokens-greyjoy"]').val(conf.powertokens.greyjoy);
-        $('[name="powertokens-lannister"]').val(conf.powertokens.lannister);
-        $('[name="powertokens-martell"]').val(conf.powertokens.martell);
-        $('[name="powertokens-stark"]').val(conf.powertokens.stark);
-        $('[name="powertokens-tyrell"]').val(conf.powertokens.tyrell);
-
-        $('[name="housecards-baratheon"]').val(conf.housecards.baratheon);
-        $('[name="housecards-greyjoy"]').val(conf.housecards.greyjoy);
-        $('[name="housecards-lannister"]').val(conf.housecards.lannister);
-        $('[name="housecards-martell"]').val(conf.housecards.martell);
-        $('[name="housecards-stark"]').val(conf.housecards.stark);
-        $('[name="housecards-tyrell"]').val(conf.housecards.tyrell);
-
-        if (conf.housecardTracking) {
-            $('[name="housecard-0-baratheon"]').attr('checked', conf.housecardTracking.baratheon[0]);
-            $('[name="housecard-1-baratheon"]').attr('checked', conf.housecardTracking.baratheon[1]);
-            $('[name="housecard-2-baratheon"]').attr('checked', conf.housecardTracking.baratheon[2]);
-            $('[name="housecard-3-baratheon"]').attr('checked', conf.housecardTracking.baratheon[3]);
-            $('[name="housecard-4-baratheon"]').attr('checked', conf.housecardTracking.baratheon[4]);
-            $('[name="housecard-5-baratheon"]').attr('checked', conf.housecardTracking.baratheon[5]);
-            $('[name="housecard-6-baratheon"]').attr('checked', conf.housecardTracking.baratheon[6]);
-
-            $('[name="housecard-0-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[0]);
-            $('[name="housecard-1-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[1]);
-            $('[name="housecard-2-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[2]);
-            $('[name="housecard-3-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[3]);
-            $('[name="housecard-4-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[4]);
-            $('[name="housecard-5-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[5]);
-            $('[name="housecard-6-greyjoy"]').attr('checked', conf.housecardTracking.greyjoy[6]);
-
-            $('[name="housecard-0-lannister"]').attr('checked', conf.housecardTracking.lannister[0]);
-            $('[name="housecard-1-lannister"]').attr('checked', conf.housecardTracking.lannister[1]);
-            $('[name="housecard-2-lannister"]').attr('checked', conf.housecardTracking.lannister[2]);
-            $('[name="housecard-3-lannister"]').attr('checked', conf.housecardTracking.lannister[3]);
-            $('[name="housecard-4-lannister"]').attr('checked', conf.housecardTracking.lannister[4]);
-            $('[name="housecard-5-lannister"]').attr('checked', conf.housecardTracking.lannister[5]);
-            $('[name="housecard-6-lannister"]').attr('checked', conf.housecardTracking.lannister[6]);
-
-            $('[name="housecard-0-martell"]').attr('checked', conf.housecardTracking.martell[0]);
-            $('[name="housecard-1-martell"]').attr('checked', conf.housecardTracking.martell[1]);
-            $('[name="housecard-2-martell"]').attr('checked', conf.housecardTracking.martell[2]);
-            $('[name="housecard-3-martell"]').attr('checked', conf.housecardTracking.martell[3]);
-            $('[name="housecard-4-martell"]').attr('checked', conf.housecardTracking.martell[4]);
-            $('[name="housecard-5-martell"]').attr('checked', conf.housecardTracking.martell[5]);
-            $('[name="housecard-6-martell"]').attr('checked', conf.housecardTracking.martell[6]);
-
-            $('[name="housecard-0-stark"]').attr('checked', conf.housecardTracking.stark[0]);
-            $('[name="housecard-1-stark"]').attr('checked', conf.housecardTracking.stark[1]);
-            $('[name="housecard-2-stark"]').attr('checked', conf.housecardTracking.stark[2]);
-            $('[name="housecard-3-stark"]').attr('checked', conf.housecardTracking.stark[3]);
-            $('[name="housecard-4-stark"]').attr('checked', conf.housecardTracking.stark[4]);
-            $('[name="housecard-5-stark"]').attr('checked', conf.housecardTracking.stark[5]);
-            $('[name="housecard-6-stark"]').attr('checked', conf.housecardTracking.stark[6]);
-
-            $('[name="housecard-0-tyrell"]').attr('checked', conf.housecardTracking.tyrell[0]);
-            $('[name="housecard-1-tyrell"]').attr('checked', conf.housecardTracking.tyrell[1]);
-            $('[name="housecard-2-tyrell"]').attr('checked', conf.housecardTracking.tyrell[2]);
-            $('[name="housecard-3-tyrell"]').attr('checked', conf.housecardTracking.tyrell[3]);
-            $('[name="housecard-4-tyrell"]').attr('checked', conf.housecardTracking.tyrell[4]);
-            $('[name="housecard-5-tyrell"]').attr('checked', conf.housecardTracking.tyrell[5]);
-            $('[name="housecard-6-tyrell"]').attr('checked', conf.housecardTracking.tyrell[6]);
-        }
-
-        $('[name="availablePowertokens-baratheon"]').val(conf.availablePowertokens.baratheon);
-        $('[name="availablePowertokens-greyjoy"]').val(conf.availablePowertokens.greyjoy);
-        $('[name="availablePowertokens-lannister"]').val(conf.availablePowertokens.lannister);
-        $('[name="availablePowertokens-martell"]').val(conf.availablePowertokens.martell);
-        $('[name="availablePowertokens-stark"]').val(conf.availablePowertokens.stark);
-        $('[name="availablePowertokens-tyrell"]').val(conf.availablePowertokens.tyrell);
-
-        $('[name="maxPowertokens"]').val(conf.maxPowertokens);
     },
-    settings = {
-        'orderTokens':
-        {
-            'march-0': 0,
-            'march-1': 1,
-            'march-2': -1,
-            'defend-0': 0,
-            'defend-1': 1,
-            'defend-2': 1
-        },
-        'orders' : 
-        {
-            'baratheon' : [],
-            'greyjoy' : [],
-            'lannister' : [],
-            'martell' : [],
-            'stark' : [],
-            'tyrell' : []
-        },
-        'controlledLands' : 
-        {
-            'baratheon' : [],
-            'greyjoy' : [],
-            'lannister' : [],
-            'martell' : [],
-            'stark' : [],
-            'tyrell' : []
-        },
-        'lands' :{
-            0 : 'Oldtown',
-            1 : 'Highgarden'
-        }
+    calcControlledLand = function() {
+
     };
 
 // inital setting of the board
@@ -436,7 +720,7 @@ try {
         throw 'No Conf in hash';
     }
 } catch (e) {
-    setBoard(getConf());
+    setBoard(currentConf);
 };
 
 
@@ -452,13 +736,48 @@ $('.navContent').on('click', '.placeOrder', function (event) {
         var house = $(event.delegateTarget).data('house');
         settings.orders[house].push({"land": land, "token": token});
     });
-    // console.log(JSON.stringify(getConf()));
-    // var hash = Base64.urlSafeEncode(LZString.compress(JSON.stringify(getConf())));
-    var hash = $.param(getConf());
-    // console.log(recursiveEncoded);
-// var recursiveDecoded = decodeURIComponent( $.param( myObject ) );
+    var hash = $.param(getConf(currentConf));
     location.hash = hash;
 
+});
+
+$('.navContent').on('click', '.placeUnit', function (event) {
+    var orders = $(event.delegateTarget).find('.newUnit');
+    var ordersCount = orders.length;
+    orders.each(function (index, value) {
+
+        var unitRank = $(this).find('.unitRank').val();
+        var land = $(this).find('.land').val();
+
+        console.log(unitRank);
+        console.log(land);
+
+        var house = $(event.delegateTarget).data('house');
+        var occupied = currentConf.controlledLands[house].filter(function ( obj ) {
+            if(obj !== undefined && obj.land === land) { return obj }
+        });
+        if(occupied === 0) {
+            occupied.units[unitRank] += 1;
+        }else{
+            var newUnit =
+            {
+                'land': land,
+                'units':
+                {
+                    'knight': 0,
+                    'footman': 0,
+                    'ship': 0,
+                    'powertoken': 0
+                }
+            };
+            newUnit.units[unitRank] += 1;
+            currentConf.controlledLands[house].push(newUnit);
+        }
+    });
+    conf = getConf(currentConf);
+    console.log(conf);
+    // var hash = $.param(conf);
+    // location.hash = hash;
 });
 
 // setting hash on form change
